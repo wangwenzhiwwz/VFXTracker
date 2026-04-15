@@ -2,16 +2,46 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VFX Tracker - 专业级影视屏幕追踪工具</title>
     <style>
+        /* 默认暗色主题 (符合影视工业调性) */
         :root {
             --bg-color: #0a0a0c;
+            --nav-bg: rgba(10, 10, 12, 0.7);
             --card-bg: rgba(28, 28, 30, 0.95);
             --accent-color: #00ff00;
             --glass-border: rgba(255, 255, 255, 0.15);
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.6);
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --mockup-border: #222222;
+            --mockup-bg: #111111;
+            --lock-badge-bg: rgba(255, 255, 255, 0.05);
+            --lock-gradient: linear-gradient(to bottom, transparent, #111111);
+            --h1-gradient: linear-gradient(to bottom, #ffffff, #888888);
+            --glow-color: rgba(0, 255, 0, 0.1);
+        }
+
+        /* 自动适配白天模式 */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-color: #f5f5f7;
+                --nav-bg: rgba(245, 245, 247, 0.7);
+                --card-bg: rgba(255, 255, 255, 0.9);
+                --glass-border: rgba(0, 0, 0, 0.1);
+                --text-primary: #1d1d1f;
+                --text-secondary: rgba(0, 0, 0, 0.6);
+                --btn-bg: #1d1d1f;
+                --btn-text: #ffffff;
+                --mockup-border: #e5e5ea;
+                --mockup-bg: #ffffff;
+                --lock-badge-bg: rgba(0, 0, 0, 0.05);
+                --lock-gradient: linear-gradient(to bottom, transparent, #e5e5ea);
+                --h1-gradient: linear-gradient(to bottom, #1d1d1f, #666666);
+                --glow-color: rgba(0, 255, 0, 0.15);
+            }
         }
 
         * {
@@ -19,6 +49,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -26,6 +57,7 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* 动态背景装饰 */
@@ -33,82 +65,99 @@
             position: fixed;
             top: -10%;
             right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 255, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            width: 50vw;
+            height: 50vw;
+            max-width: 500px;
+            max-height: 500px;
+            background: radial-gradient(circle, var(--glow-color) 0%, rgba(0, 0, 0, 0) 70%);
             z-index: -1;
+            transition: background 0.3s ease;
         }
 
         /* 导航栏 */
         nav {
-            padding: 20px 5%;
+            padding: 16px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(10, 10, 12, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: var(--nav-bg);
+            transition: background 0.3s ease;
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 800;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
             color: var(--accent-color);
+        }
+        
+        .nav-links {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         /* Hero 区域 */
         header {
-            padding: 100px 5% 60px;
+            padding: 80px 5% 40px;
             text-align: center;
             max-width: 900px;
             margin: 0 auto;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 6vw, 4rem); /* 响应式字体缩放 */
             font-weight: 800;
             margin-bottom: 20px;
-            background: linear-gradient(to bottom, #fff, #888);
+            background: var(--h1-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1.1;
         }
 
         p.subtitle {
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 3vw, 1.25rem);
             color: var(--text-secondary);
             margin-bottom: 40px;
+            padding: 0 10px;
         }
 
         .download-btn {
             display: inline-block;
-            background: var(--text-primary);
-            color: #000;
+            background: var(--btn-bg);
+            color: var(--btn-text);
             padding: 16px 40px;
             border-radius: 100px;
             font-weight: 700;
+            font-size: 1.1rem;
             text-decoration: none;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
         }
 
         .download-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         /* 手机 Mockup 展示区 */
         .mockup-container {
-            margin: 60px auto;
-            width: 300px;
-            height: 600px;
-            background: #111;
-            border: 12px solid #222;
+            margin: 40px auto 60px;
+            width: 90%;
+            max-width: 320px;
+            aspect-ratio: 1 / 2; /* 确保比例完美 */
+            background: var(--mockup-bg);
+            border: 12px solid var(--mockup-border);
             border-radius: 40px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+            animation: float 6s ease-in-out infinite;
+            transition: border-color 0.3s ease, background 0.3s ease;
         }
 
         .mockup-screen {
@@ -120,25 +169,26 @@
 
         .crosshair {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: clamp(24px, 8vw, 40px);
+            height: clamp(24px, 8vw, 40px);
         }
 
         .crosshair::before, .crosshair::after {
             content: '';
             position: absolute;
             background: white;
+            border-radius: 2px;
         }
 
-        .crosshair::before { width: 100%; height: 6px; top: 17px; left: 0; }
-        .crosshair::after { height: 100%; width: 6px; left: 17px; top: 0; }
+        .crosshair::before { width: 100%; height: 15%; top: 42.5%; left: 0; }
+        .crosshair::after { height: 100%; width: 15%; left: 42.5%; top: 0; }
 
         /* 特性区域 */
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 60px 5%;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 40px 5%;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -146,62 +196,74 @@
         .card {
             background: var(--card-bg);
             border: 1.5px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 40px;
-            transition: border-color 0.3s;
+            border-radius: 28px;
+            padding: 32px;
+            transition: border-color 0.3s, transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
         }
 
         .card:hover {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: var(--text-secondary);
+            transform: translateY(-5px);
         }
 
         .card h3 {
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+            margin-bottom: 12px;
+            font-size: 1.35rem;
+            color: var(--text-primary);
         }
 
         .card p {
             color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         /* 拍摄锁定说明 */
         .lock-notice {
             text-align: center;
-            padding: 80px 5%;
-            background: linear-gradient(to bottom, transparent, #111);
+            padding: 80px 5% 100px;
+            background: var(--lock-gradient);
+            transition: background 0.3s ease;
         }
 
         .lock-badge {
             display: inline-block;
-            padding: 8px 20px;
-            background: rgba(255,255,255,0.05);
+            padding: 6px 16px;
+            background: var(--lock-badge-bg);
             border: 1px solid var(--glass-border);
             border-radius: 50px;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .lock-notice h2 {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            margin-bottom: 16px;
         }
 
         footer {
-            padding: 60px 5%;
+            padding: 40px 5%;
             text-align: center;
             border-top: 1px solid var(--glass-border);
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* 动画 */
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
             100% { transform: translateY(0px); }
         }
 
-        .mockup-container {
-            animation: float 6s ease-in-out infinite;
-        }
-
+        /* 移动端深度优化 */
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
+            header { padding: 60px 5% 20px; }
+            .card { padding: 24px; }
+            .features { gap: 16px; padding: 20px 5%; }
+            .lock-notice { padding: 60px 5%; }
         }
     </style>
 </head>
@@ -222,10 +284,10 @@
 
     <div class="mockup-container">
         <div class="mockup-screen">
-            <div class="crosshair" style="top: 20px; left: 20px;"></div>
-            <div class="crosshair" style="top: 20px; right: 20px;"></div>
-            <div class="crosshair" style="bottom: 20px; left: 20px;"></div>
-            <div class="crosshair" style="bottom: 20px; right: 20px;"></div>
+            <div class="crosshair" style="top: 8%; left: 8%;"></div>
+            <div class="crosshair" style="top: 8%; right: 8%;"></div>
+            <div class="crosshair" style="bottom: 8%; left: 8%;"></div>
+            <div class="crosshair" style="bottom: 8%; right: 8%;"></div>
             <div class="crosshair" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
         </div>
     </div>
@@ -237,7 +299,7 @@
         </div>
         <div class="card">
             <h3>毛玻璃 UI</h3>
-            <p>采用深色 Glassmorphism 设计，调节界面优雅不刺眼，双击或锁定即可隐藏，绝不干扰拍摄画面。</p>
+            <p>采用 Glassmorphism 设计，调节界面优雅不刺眼，双击或锁定即可隐藏，绝不干扰拍摄画面。</p>
         </div>
         <div class="card">
             <h3>绝对防误触</h3>
@@ -252,7 +314,7 @@
     <section class="lock-notice">
         <div class="lock-badge">安全保障</div>
         <h2>无需担心拍摄事故</h2>
-        <p class="subtitle" style="max-width: 600px; margin: 20px auto;">
+        <p class="subtitle" style="max-width: 600px; margin: 0 auto;">
             我们的锁定模式会屏蔽所有系统级手势。这意味着你可以放心让演员握持手机，而不必担心突然跳出的通知栏或意外旋转的屏幕。
         </p>
     </section>
