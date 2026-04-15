@@ -1,6 +1,6 @@
 # VFX Tracker - 专业级影视拍摄手机屏幕跟踪工具
 
-![VFX Tracker Logo](https://via.placeholder.com/150/00FF00/FFFFFF?text=VFX+Tracker)
+![VFX Tracker Logo](https://app.wwz.im/images/VFXTracker.png)
 
 **VFX Tracker** 是一款专为影视后期制作（VFX）设计的 Android 应用。它将智能手机转变为标准的色度键（Chroma Key）绿幕，并带有高精度的追踪标记（Tracking Markers），帮助后期制作人员轻松完成屏幕替换和透视匹配。
 
